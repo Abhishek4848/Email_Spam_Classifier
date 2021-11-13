@@ -11,7 +11,7 @@ Pokemon Image Classification
 ## How to run
 run the python file which will send the data over tcp connection
 
-```python3 -f <filename> -b <batch size>```
+```python3 stream.py -f <dataset name> -b <batch size>```
 
 execute the spark fetch with the help of spark submit
 
