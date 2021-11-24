@@ -22,3 +22,9 @@ execute the spark fetch with the help of spark submit
 
 ## Demo to run
 need to experiment with the batch size ( >1000).
+
+running the stream.py file
+![image](https://user-images.githubusercontent.com/54106076/143176095-dd4346e9-7c72-4b7f-ba4f-d18f616cd197.png)
+
+running the spark_fetch file
+![image](https://user-images.githubusercontent.com/54106076/143176371-3fb36a43-7fa0-491b-9092-16e5323fb21a.png)
