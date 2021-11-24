@@ -1,6 +1,7 @@
 ## Real world spark streaming and predictive data modelling.
 Email spam Classification
 
+
 1.  Each record consists of 3 features - the subject, the email content and the label
 
 2.  Each email is one of 2 classes, spam or ham
