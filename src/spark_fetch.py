@@ -33,7 +33,13 @@ def process(rdd,id_count):
             print("Recieved batch of data of length :",len(rows_spam))
             
             # calling the bernouli nb model
-            process_temp.pre_process_spam_bnb(rows_spam,sc)
+            # process_temp.pre_process_spam_bnb(rows_spam,sc)
+            
+            # calling the multinomial nb model
+            process_temp.pre_process_spam_mnb(rows_spam,sc)
+
+            # calling the svgd classifer
+            #process_temp.pre_process_spam_SGD(rows_spam,sc)
 
 batches.foreachRDD(lambda rdd : process(rdd,id_count))
 id_count+=1
