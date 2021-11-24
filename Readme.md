@@ -19,3 +19,6 @@ run the python file which will send the data over tcp connection
 execute the spark fetch with the help of spark submit
 
 ```$SPARK_HOME/bin/spark-submit spark_fetch.py 2>log.txt```
+
+## Demo to run
+need to experiment with the batch size ( >1000).
