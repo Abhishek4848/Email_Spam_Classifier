@@ -10,7 +10,7 @@ Email spam Classification
 
 
 
-**Dataset Link**: [Email spam](https://drive.google.com/drive/folders/10Ys7jqesPfChrAahi4y6rw7FDCGPFFA0)
+**Dataset Link**: [Email spam](https://drive.google.com/drive/folders/1mMPa21_FInHVNOaG5irmve42Su6dI77K)
 
 ## How to run
 run the python file which will send the data over tcp connection
