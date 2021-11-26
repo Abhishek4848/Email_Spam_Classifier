@@ -1,6 +1,5 @@
 __pycache__
 logs/log.txt
-*.csv
-log.txt
+*.txt
 spam/train.csv
 */__pycache__
