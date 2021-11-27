@@ -84,7 +84,7 @@ def streamCIFARDataset(tcp_connection, dataset_type='cifar'):
     ]
     for batch in CIFAR_BATCHES:
         sendCIFARBatchFileToSpark(tcp_connection, batch)
-        time.sleep(200)
+        time.sleep(5)
 
 
 def sendPokemonBatchFileToSpark(tcp_connection, input_batch_file):
@@ -116,7 +116,7 @@ def sendPokemonBatchFileToSpark(tcp_connection, input_batch_file):
             print("Either batch size is too big for the dataset or the connection was closed")
         except Exception as error_message:
             print(f"Exception thrown but was handled: {error_message}")
-        time.sleep(200)
+        time.sleep(5)
             
 
 def streamPokemonDataset(tcp_connection, dataset_type='pokemon'):
@@ -144,7 +144,7 @@ def streamDataset(tcp_connection, dataset_type):    # function to stream a datas
     ]
     for dataset in DATASETS:
         streamCSVFile(tcp_connection, f'../{dataset_type}/{dataset}.csv')
-        time.sleep(200)
+        time.sleep(5)
 
 
 def streamCSVFile(tcp_connection, input_file):    # stream a CSV file to Spark
@@ -198,7 +198,7 @@ def streamCSVFile(tcp_connection, input_file):    # stream a CSV file to Spark
             print("Either batch size is too big for the dataset or the connection was closed")
         except Exception as error_message:
             print(f"Exception thrown but was handled: {error_message}")
-        time.sleep(200)
+        time.sleep(5)
 
 
 def streamFile(tcp_connection, input_file):  # stream a newline delimited file to Spark
