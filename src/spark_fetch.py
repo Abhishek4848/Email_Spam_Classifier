@@ -19,6 +19,7 @@ batches = lines.flatMap(lambda line: line.split("\n"))
 def process(rdd,id_count):
         # id_count is redundant
         if not rdd.isEmpty():
+
             json_strings = rdd.collect()
             for rows in json_strings:
                 temp_obj = json.loads(rows,strict = False)
@@ -31,16 +32,17 @@ def process(rdd,id_count):
                 temp_l.append(str(temp_obj[i]['feature2']).strip(' '))
                 rows_spam.append(tuple(temp_l))
             print("Recieved batch of data of length :",len(rows_spam))
-            
+            rdd2 = sc.parallelize(rows_spam)
             # calling the bernouli nb model
             # process_temp.pre_process_spam_bnb(rows_spam,sc)
             
             # calling the multinomial nb model
-            # process_temp.pre_process_spam_mnb(rows_spam,sc)
+            process_temp.pre_process_spam_mnb(rdd2,sc)
 
             # calling the svgd classifer
-            process_temp.pre_process_spam_SGD(rows_spam,sc)
+            #process_temp.pre_process_spam_SGD(rows_spam,sc)
 
+            print("batch completed\n\n")
 batches.foreachRDD(lambda rdd : process(rdd,id_count))
 id_count+=1
 

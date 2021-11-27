@@ -7,9 +7,9 @@ from sklearn.linear_model import SGDClassifier
 from pyspark.streaming import StreamingContext
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
-from pyspark.ml.feature import Tokenizer,StopWordsRemover, CountVectorizer,IDF,StringIndexer, HashingTF, NGram
+from pyspark.ml.feature import Tokenizer,StopWordsRemover, CountVectorizer,IDF,StringIndexer, HashingTF, NGram, Word2Vec
 from pyspark.ml.feature import VectorAssembler
-from pyspark.ml.linalg import Vector
+from pyspark.ml.linalg import Vector, MinMaxScaler
 from sklearn.metrics import r2_score,accuracy_score, precision_score, recall_score
 from pyspark.ml import Pipeline
 from pyspark.ml.pipeline import PipelineModel
@@ -45,35 +45,54 @@ def preprocess(l,sc):
     df = spark.createDataFrame(l,schema='length long,subject_of_message string,content_of_message string,ham_spam string')
 
     # preprocessing part (can add/remove stuff) , right now taking the column subject_of_message for spam detection
+
+    #preprocessing the content of message column
     tokenizer = Tokenizer(inputCol="content_of_message", outputCol="token_text")
     stopwords = StopWordsRemover().getStopWords() + ['-']
     stopremove = StopWordsRemover().setStopWords(stopwords).setInputCol('token_text').setOutputCol('stop_tokens')
     bigram = NGram().setN(2).setInputCol('stop_tokens').setOutputCol('bigrams')
-    ht = HashingTF(inputCol="bigrams", outputCol="ht",numFeatures=8000)
-    ham_spam_to_num = StringIndexer(inputCol='ham_spam',outputCol='label')
+    word2Vec = Word2Vec(vectorSize=5, minCount=0, inputCol="bigrams", outputCol="feature2")
+    mmscaler = MinMaxScaler(inputCol='feature2',outputCol='scaled_feature2')
 
+
+    # pre-procesing the subject of message column
+    tokenizer1 = Tokenizer(inputCol="subject_of_message", outputCol="token_text1")
+    stopwords1 = StopWordsRemover().getStopWords() + ['-']
+    stopremove1 = StopWordsRemover().setStopWords(stopwords).setInputCol('token_text1').setOutputCol('stop_tokens1')
+    bigram1 = NGram().setN(2).setInputCol('stop_tokens1').setOutputCol('bigrams1')
+    word2Vec1 = Word2Vec(vectorSize=5, minCount=0, inputCol="bigrams1", outputCol="feature1")
+    mmscaler1 = MinMaxScaler(inputCol='feature1',outputCol='scaled_feature1')
+
+    #ht = HashingTF(inputCol="bigrams", outputCol="ht",numFeatures=8000)
+    ham_spam_to_num = StringIndexer(inputCol='ham_spam',outputCol='label')
+    print("starting pre-processing of data (wait 2-3 min)")
 
     # applying the pre procesed pipeling model on the batches of data recieved
-    data_prep_pipe = Pipeline(stages=[ham_spam_to_num,tokenizer,stopremove,bigram,ht])
+    data_prep_pipe = Pipeline(stages=[ham_spam_to_num,tokenizer,stopremove,bigram,word2Vec,mmscaler,tokenizer1,stopremove1,bigram1,word2Vec1,mmscaler1])
     cleaner = data_prep_pipe.fit(df)
     clean_data = cleaner.transform(df)
-    clean_data = clean_data.select(['label','stop_tokens','ht','bigrams'])
+    clean_data = clean_data.select(['label','stop_tokens','bigrams','feature1','feature2','scaled_feature2','scaled_feature1'])
+    print("pre process of data completed")
 
     # splitting the batch data into 70:30 training and testing data
-    (training,testing) = clean_data.randomSplit([0.7,0.3])
-    X_train = np.array(training.select('ht').collect())
-    y_train = np.array(training.select('label').collect())
+    (training,testing) = clean_data.randomSplit([0.8,0.2])
+    clean_data.show()
 
+    X_train = np.array(training.select(['scaled_feature1','scaled_feature2']).collect())
+    y_train = np.array(training.select('label').collect())
+    print("splitting data for test and train complete")
     # reshaping the data
     nsamples, nx, ny = X_train.shape
     X_train = X_train.reshape((nsamples,nx*ny))
 
     # doing the above stuff for the test data
-    X_test = np.array(testing.select('ht').collect())
+
+    X_test = np.array(testing.select(['scaled_feature1','scaled_feature2']).collect())
     y_test = np.array(testing.select('label').collect())
     nsamples, nx, ny = X_test.shape
     X_test = X_test.reshape((nsamples,nx*ny))
     return (X_test,y_test,X_train,y_train)
+
 
 # function to meawsure peformance metrics
 def perform_metrics(y_test,pred_batch):
