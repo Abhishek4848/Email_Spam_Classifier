@@ -9,7 +9,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.ml.feature import Tokenizer,StopWordsRemover, CountVectorizer,IDF,StringIndexer, HashingTF, NGram, Word2Vec
 from pyspark.ml.feature import VectorAssembler
-from pyspark.ml.linalg import Vector, MinMaxScaler
+from pyspark.ml.linalg import Vector
 from sklearn.metrics import r2_score,accuracy_score, precision_score, recall_score
 from pyspark.ml import Pipeline
 from pyspark.ml.pipeline import PipelineModel
