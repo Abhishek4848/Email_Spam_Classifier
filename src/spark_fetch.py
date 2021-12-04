@@ -37,10 +37,13 @@ def process(rdd,id_count):
             # process_temp.pre_process_spam_bnb(rows_spam,sc)
             
             # calling the multinomial nb model
-            process_temp.pre_process_spam_mnb(rdd2,sc)
+            #process_temp.pre_process_spam_mnb(rdd2,sc)
 
             # calling the svgd classifer
             #process_temp.pre_process_spam_SGD(rows_spam,sc)
+            
+            # calling MiniBatchKMeans
+            process_temp.pre_process_spam_KMC(rows_spam,sc)
 
             print("batch completed\n\n")
 batches.foreachRDD(lambda rdd : process(rdd,id_count))

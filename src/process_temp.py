@@ -3,6 +3,8 @@ from pyspark import SparkContext
 from pyspark.sql import SQLContext
 from pyspark.sql.types import * 
 from sklearn.naive_bayes import BernoulliNB,MultinomialNB
+from sklearn.cluster import MiniBatchKMeans
+from sklearn.cluster import MiniBatchKMeans
 from sklearn.linear_model import SGDClassifier
 from pyspark.streaming import StreamingContext
 from pyspark.sql import SparkSession
@@ -203,6 +205,38 @@ def pre_process_spam_SGD(l,sc):
         score, acc, pr, re, fscore = perform_metrics(y_test,pred_batch)
         log_write(score, acc, pr, re, fscore, 'build/SGD')
         joblib.dump(clf, 'build/SGD.pkl')
+
+    # showing the data after preprocessing
+    # clean_data.show()
+
+# Model for Clustering
+def pre_process_spam_KMC(l,sc):
+    X_test,y_test,X_train,y_train = preprocess(l,sc)
+    '''
+    Implement incremental learning
+    '''
+    try:
+        '''
+        loading the partial model
+        '''
+        print("Started increment learning")
+        clf_load = joblib.load('build/KMC.pkl')
+        clf_load.partial_fit(X_train,y_train.ravel())
+        pred_batch = clf_load.predict(X_test)
+        score, acc, pr, re, fscore = perform_metrics(y_test,pred_batch)
+        log_write(score, acc, pr, re, fscore, 'build/KMC')
+        joblib.dump(clf_load, 'build/KMC.pkl')
+    except Exception as e:
+        '''
+        training the model for the first time
+        '''
+        print("Started first train of KMC model")
+        clf = MiniBatchKMeans(n_clusters=np.unique(y_train))
+        clf.partial_fit(X=X_train,y=y_train.ravel())
+        pred_batch = clf.predict(X_test)
+        score, acc, pr, re, fscore = perform_metrics(y_test,pred_batch)
+        log_write(score, acc, pr, re, fscore, 'build/KMC')
+        joblib.dump(clf, 'build/KMC.pkl')
 
     # showing the data after preprocessing
     # clean_data.show()

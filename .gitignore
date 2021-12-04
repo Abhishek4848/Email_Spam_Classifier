@@ -1,5 +1,6 @@
 __pycache__
+spam
 logs/log.txt
 *.txt
-spam/train.csv
+src/stream.py
 */__pycache__
