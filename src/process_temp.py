@@ -221,7 +221,7 @@ def pre_process_spam_KMC(l,sc):
         '''
         print("Started increment learning")
         clf_load = joblib.load('build/KMC.pkl')
-        clf_load.partial_fit(X_train,y_train.ravel())
+        clf_load.partial_fit(X=X_train,y=y_train.ravel())
         pred_batch = clf_load.predict(X_test)
         score, acc, pr, re, fscore = perform_metrics(y_test,pred_batch)
         log_write(score, acc, pr, re, fscore, 'build/KMC')
@@ -231,7 +231,7 @@ def pre_process_spam_KMC(l,sc):
         training the model for the first time
         '''
         print("Started first train of KMC model")
-        clf = MiniBatchKMeans(n_clusters=np.unique(y_train))
+        clf = MiniBatchKMeans(n_clusters=2)
         clf.partial_fit(X=X_train,y=y_train.ravel())
         pred_batch = clf.predict(X_test)
         score, acc, pr, re, fscore = perform_metrics(y_test,pred_batch)

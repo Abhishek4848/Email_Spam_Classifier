@@ -10,14 +10,13 @@ import json
 
 sc = SparkContext("local[2]","test")
 
-id_count = 1
+id_count = 0
 ssc = StreamingContext(sc,1)
 spark = SparkSession(sc)
 sql_context = SQLContext(sc)
 lines = ssc.socketTextStream('localhost',6100)
 batches = lines.flatMap(lambda line: line.split("\n"))
-def process(rdd,id_count):
-        # id_count is redundant
+def process(rdd):
         if not rdd.isEmpty():
 
             json_strings = rdd.collect()
@@ -44,10 +43,12 @@ def process(rdd,id_count):
             
             # calling MiniBatchKMeans
             process_temp.pre_process_spam_KMC(rows_spam,sc)
-
-            print("batch completed\n\n")
-batches.foreachRDD(lambda rdd : process(rdd,id_count))
-id_count+=1
-
+            global id_count
+            id_count+=1
+            print(id_count, "batch completed\n\n")
+batches.foreachRDD(lambda rdd : process(rdd))
+print("before")
 ssc.start()
+print("after")
 ssc.awaitTermination()
+print("end")

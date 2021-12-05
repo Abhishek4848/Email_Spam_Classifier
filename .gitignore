@@ -3,4 +3,5 @@ spam
 logs/log.txt
 *.txt
 src/stream.py
+build/*
 */__pycache__
