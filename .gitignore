@@ -5,3 +5,4 @@ logs/log.txt
 src/stream.py
 build/*.pkl
 */__pycache__
+*.csv

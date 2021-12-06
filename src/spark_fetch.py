@@ -47,8 +47,5 @@ def process(rdd):
             id_count+=1
             print(id_count, "batch completed\n\n")
 batches.foreachRDD(lambda rdd : process(rdd))
-print("before")
 ssc.start()
-print("after")
 ssc.awaitTermination()
-print("end")
