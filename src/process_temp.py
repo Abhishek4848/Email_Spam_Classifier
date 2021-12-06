@@ -1,5 +1,5 @@
 # some libraries are redundant
-from sklearn.decomposition import PCA
+# from sklearn.decomposition import PCA
 from pyspark import SparkContext
 from pyspark.sql import SQLContext
 from pyspark.sql.types import * 
@@ -213,9 +213,9 @@ def pre_process_spam_SGD(l,sc):
 # Model for Clustering
 def pre_process_spam_KMC(l,sc):
     X_test,y_test,X_train,y_train = preprocess(l,sc)
-    pca = PCA(3)	# Decomposition to 3D
-    X_train = pca.fit_transform(X_train)
-    X_test = pca.transform(X_test)
+    # pca = PCA(3)	# Decomposition to 3D
+    # X_train = pca.fit_transform(X_train)
+    # X_test = pca.transform(X_test)
     '''
     Implement incremental learning
     '''
